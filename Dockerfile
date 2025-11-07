@@ -29,4 +29,4 @@ COPY ./app ./app
 COPY ./main.py .
 
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
