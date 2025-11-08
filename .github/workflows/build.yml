@@ -30,6 +30,7 @@ jobs:
       - name: Run unit tests
         env:
             PYTHONPATH: .
+            DATABASE_URL: ${{ vars.DUMMY_DATABASE_URL }}
         run: pytest -v
 
       - name: Trigger Render Deploy
