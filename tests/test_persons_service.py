@@ -41,9 +41,7 @@ def test_get_person_not_found():
     with pytest.raises(HTTPException) as exc_info:
         service.get_person(person_id=999)
 
-    # Дополнительно проверяем, что у исключения правильный статус-код
     assert exc_info.value.status_code == 404
-    # Проверяем, что метод на моке был вызван
     mock_repo.get_by_id.assert_called_once_with(999)
 
 
