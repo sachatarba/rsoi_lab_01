@@ -33,14 +33,17 @@ jobs:
           TEST_DATABASE_URL: ${{ vars.DUMMY_DATABASE_URL }}
         run: pytest -v
 
-      - name: Deploy to Render
-        id: deploy
-        if: github.ref == 'refs/heads/main' && success()
-        uses: shrink-service/render-deploy@v0.0.12
-        with:
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
-          wait-for-success: true
+      - name: Install Render CLI
+        run: |
+          curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
+          unzip render.zip
+          sudo mv cli_v1.1.0 /usr/local/bin/render
+      - name: Trigger deploy with Render CLI
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          CI: true
+        run: |
+          render deploys create ${{ secrets.RENDER_SERVICE_ID }} --output json --confirm --wait
 
       - name: Run API Tests (Newman)
         if: github.ref == 'refs/heads/main' && steps.deploy.outcome == 'success'
